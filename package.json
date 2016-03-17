@@ -1,0 +1,27 @@
+{
+  "name": "mongodb-npm-test",
+  "version": "0.1.0",
+  "description": "Test mongodb npm",
+  "main": "e",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "__???___"
+  },
+  "author": "Tim Pfafman <tim@coworkr.co>",
+  "license": "MIT",
+  "dependencies": {
+    "fibers": ">=1.0.1",
+    "moment": ">=2.7.0",
+    "moment-timezone": ">=0.4.0",
+    "mongodb": ">=2.1.9",
+    "underscore": ">=1.6.0",
+    "colors": ">=1.1.0",
+    "kerberos": "*"
+  },
+  "devDependencies": {
+
+  }
+}
