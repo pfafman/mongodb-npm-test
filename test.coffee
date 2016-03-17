@@ -4,6 +4,7 @@
 Fiber    = require('fibers')
 Future   = require('fibers/future')
 Mongo    = Future.wrap(require('mongodb').MongoClient)
+ObjectId = require('mongodb').ObjectID
 moment   = require('moment')
 colors   = require('colors')
 _        = require('underscore')
@@ -24,15 +25,18 @@ sleep = (ms) ->
   Fiber.yield()
 
 
+insertOptions = {}
+
 Future.task ->
 
-  db         = Mongo.connectFuture(dbUrl).wait()
-  Collection = Future.wrap(db.collection('test'))
+  db       = Mongo.connectFuture(dbUrl).wait()
+  Tests    = Future.wrap(db.collection('tests'))
+  TestLogs = Future.wrap(db.collection('testLogs'))
 
   Log("Db setup done".green)
 
   try
-    rtn = Collection.updateFuture
+    Collection.update
       name: "Test"
     ,
       $set:
@@ -42,7 +46,6 @@ Future.task ->
         updated: new Date()
     ,
       upsert: true
-    .wait()
   catch e
     Log("Test Upsert Failed".red, e)
 
@@ -52,18 +55,33 @@ Future.task ->
 
   while true
 
+    starttime = new Date()
 
-    Log("Update".green)
-    Collection.update
+    Log("Tests Update".green)
+    Tests.update
       name: "Test"
     ,
       $set:
         updated: new Date()
 
     count++
-    Log("Updated #{count}".green)
+    Log("Tests Updated #{count}".green)
 
-    sleep(200)
+    sleep(20)
+
+    Log("Logs insert")
+    TestLogs.insertFuture
+      _id: (new ObjectId()).toHexString()
+      processId: 'test'
+      starttime: starttime
+      count: count
+      status: 'running'
+      date: new Date()
+    , insertOptions
+    .wait()  # ?
+    Log("Logs inserted")
+
+    sleep(100)
 
   Log("exit".red)
   process.exit(0)
